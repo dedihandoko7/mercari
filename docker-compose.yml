@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
 auth-service:
-image: asia-southeast2-docker.pkg.dev/sodium-burner-466106-g3/auth-service:latest
+image: asia-southeast2-docker.pkg.dev/sodium-burner-466106-g3/mercari-repo/auth-service:latest
 container_name: auth-service
 ports:
   - "4000:4000"
@@ -17,7 +17,7 @@ environment:
 restart: unless-stopped
 
 cart-service:
-  image: asia-southeast2-docker.pkg.dev/mercari-repo/cart:latest
+  image: asia-southeast2-docker.pkg.dev/sodium-burner-466106-g3/mercari-repo/cart:latest
   container_name: cart-service
   ports:
     - "3001:3001"
@@ -32,7 +32,7 @@ cart-service:
   restart: unless-stopped
 
   product-service:
-    image: asia-southeast2-docker.pkg.dev/sodium-burner-466106-g3/product:latest
+    image: asia-southeast2-docker.pkg.dev/sodium-burner-466106-g3/mercari-repo/product:latest
     container_name: product-service
     ports:
       - "3000:3000"
@@ -47,7 +47,7 @@ cart-service:
     restart: unless-stopped
 
   gateway-service:
-    image: asia-southeast2-docker.pkg.dev/sodium-burner-466106-g3/gateway-service:latest
+    image: asia-southeast2-docker.pkg.dev/sodium-burner-466106-g3/mercari-repo/gateway-service:latest
     container_name: gateway-service
     ports:
       - "3000:3000"
