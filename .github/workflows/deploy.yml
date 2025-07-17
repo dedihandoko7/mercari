@@ -62,7 +62,7 @@ jobs:
       uses: appleboy/ssh-action@v1.0.0
       with:
         host: ${{ secrets.VM_HOST }}
-        username: LENOVO
+        username: dedihandoko7
         key: ${{ secrets.VM_SSH_KEY }}
         port: 22
         script: |
