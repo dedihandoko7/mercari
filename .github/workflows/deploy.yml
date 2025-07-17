@@ -3,10 +3,12 @@ name: CI/CD Deploy to GCP
 on:
   push:
     branches:
-      - master
+      - main
 
 env:
   GCP_PROJECT_ID: sodium-burner-466106-g3
+  GCP_REGION: asia-southeast2
+  GCP_REPOSITORY: mercari-repo
 
 jobs:
   build-and-deploy:
