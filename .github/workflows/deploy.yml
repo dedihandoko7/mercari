@@ -34,28 +34,28 @@ jobs:
     - name: Build & Push auth-service image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/auth-service:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/auth-service:latest \
           ./auth-service --push
 
     # Build & Push Cart Service
     - name: Build & Push cart image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/cart:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/cart:latest \
           ./cart --push
 
     # Build & Push Product Service
     - name: Build & Push product image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/product:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/product:latest \
           ./product --push
 
     # Build & Push Gateway Service
     - name: Build & Push gateway-service image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/gateway-service:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/gateway-service:latest \
           ./gateway-service --push
 
     # SSH to VM and Deploy
