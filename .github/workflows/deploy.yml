@@ -85,11 +85,11 @@ jobs:
           if [ ! -f .env ]; then
             cat > .env << EOF
           DB_USER=postgres
-          DB_PASS=GzUXBMEe8dFRBY69GYXNg2VWEYaGiTxcBkVB
+          DB_PASS=didit051211
           AUTH_DB_NAME=authdb
           CART_DB_NAME=cartdb
           PRODUCT_DB_NAME=productdb
-          DB_HOST=34.123.120.244
+          DB_HOST=34.101.70.101
           DB_PORT=5432
           DB_DIALECT=postgres
           JWT_SECRET=mysecretkey
