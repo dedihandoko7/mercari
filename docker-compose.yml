@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+auth-service:
+image: gcr.io/sodium-burner-466106-g3/mercari/auth-service:latest
+port:
+  -"4000:4000"
+environment:
+ -DB_USER={{DB_USER}}
+ -DB_PASS={{DB_PASS}}
+ -DB_NAME={{AUTH_DB_NAME}}
+ -DB_HOST={{DB_HOST}}
+ -DB_PORT={{DB_PORT}}
+ -DB_DIALECT=postgres
+ -JWT_SECRET={{JWT_SECRET}}
+restart: unless-stopped
+
+cart-service:
+  image: gcr.io/sodium-burner-466106-g3/mercari/cart:latest
+  port:
+    -"3001:3001"
+  environment:
+    -DB_USER={{DB_USER}}
+    -DB_PASS={{DB_PASS}}
+    -DB_NAME={{CART_DB_NAME}}
+    -DB_HOST={{DB_HOST}}
+    -DB_PORT={{DB_PORT}}
+    -DB_DIALECT=postgres
+    -JWT_SECRET={{JWT_SECRET}}
+  restart: unless-stopped
+
+  product-service:
+    image: gcr.io/sodium-burner-466106-g3/mercari/product:latest
+    port:
+      -"3000:3000"
+    environment:
+      -DB_USER={{DB_USER}}
+      -DB_PASS={{DB_PASS}}
+      -DB_NAME={{CART_DB_NAME}}
+      -DB_HOST={{DB_HOST}}
+      -DB_PORT={{DB_PORT}}
+      -DB_DIALECT=postgres
+      -JWT_SECRET={{JWT_SECRET}}
+    restart: unless-stopped
+
+  gateway-service:
+    image: gcr.io/sodium-burner-466106-g3/mercari/gateway-service:latest
+    port:
+      -"8080:8080"
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped
