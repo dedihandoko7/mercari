@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
 auth-service:
-image: gcr.io/sodium-burner-466106-g3/auth-service:latest
+image: asia-southeast2-docker.pkg.dev/sodium-burner-466106-g3/auth-service:latest
 ports:
   - "4000:4000"
 environment:
@@ -16,7 +16,7 @@ environment:
 restart: unless-stopped
 
 cart-service:
-  image: gcr.io/sodium-burner-466106-g3/cart:latest
+  image: asia-southeast2-docker.pkg.dev/mercari-repo/cart:latest
   ports:
     - "3001:3001"
   environment:
@@ -30,7 +30,7 @@ cart-service:
   restart: unless-stopped
 
   product-service:
-    image: gcr.io/sodium-burner-466106-g3/product:latest
+    image: asia-southeast2-docker.pkg.dev/sodium-burner-466106-g3/product:latest
     ports:
       - "3000:3000"
     environment:
@@ -44,7 +44,7 @@ cart-service:
     restart: unless-stopped
 
   gateway-service:
-    image: gcr.io/sodium-burner-466106-g3/gateway-service:latest
+    image: asia-southeast2-docker.pkg.dev/sodium-burner-466106-g3/gateway-service:latest
     ports:
       - "3000:3000"
     environment:
