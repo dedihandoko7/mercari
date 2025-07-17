@@ -32,28 +32,28 @@ jobs:
     - name: Build & Push auth-service image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t gcr.io/${{ env.GCP_PROJECT_ID }}/auth-service:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/auth-service:latest \
           ./auth-service --push
 
     # Build & Push Cart Service
     - name: Build & Push cart image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t gcr.io/${{ env.GCP_PROJECT_ID }}/cart:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/cart:latest \
           ./cart --push
 
     # Build & Push Product Service
     - name: Build & Push product image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t gcr.io/${{ env.GCP_PROJECT_ID }}/product:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/product:latest \
           ./product --push
 
     # Build & Push Gateway Service
     - name: Build & Push gateway-service image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t gcr.io/${{ env.GCP_PROJECT_ID }}/gateway-service:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/gateway-service:latest \
           ./gateway-service --push
 
     # SSH to VM and Deploy
@@ -79,6 +79,21 @@ jobs:
             echo "Installing docker-compose..."
             sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
+          fi
+
+          # Create .env file with database credentials if it doesn't exist
+          if [ ! -f .env ]; then
+            cat > .env << EOF
+          DB_USER=postgres
+          DB_PASS=GzUXBMEe8dFRBY69GYXNg2VWEYaGiTxcBkVB
+          AUTH_DB_NAME=authdb
+          CART_DB_NAME=cartdb
+          PRODUCT_DB_NAME=productdb
+          DB_HOST=34.123.120.244
+          DB_PORT=5432
+          DB_DIALECT=postgres
+          JWT_SECRET=mysecretkey
+          EOF
           fi
           
           # Pull and run containers

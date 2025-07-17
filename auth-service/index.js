@@ -18,7 +18,7 @@ sequelize.sync()
 app.use('/auth', authRouter);
 
 app.get('/', (req, res) =>{
-    res.send('Auth service is Running!');
+    res.send('Auth service is Running OK');
 });
 
 const PORT = process.env.PORT || 4000;
