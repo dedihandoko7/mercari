@@ -68,7 +68,7 @@ jobs:
         script: |
           # Clone or update repository
           if [ ! -d ~/mercari ]; then
-            git clone https://github.com/${{ github.repository }} ~/mercari
+            git clone https://github.com/${{ github.repository }}
           else
             cd ~/mercari && git pull
           fi
