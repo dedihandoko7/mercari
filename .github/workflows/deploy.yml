@@ -3,7 +3,7 @@ name: CI/CD Deploy to GCP
 on:
   push:
     branches:
-      - master
+      - main  # Ganti 'main' sesuai dengan nama default branch repo kamu
 
 env:
   GCP_PROJECT_ID: sodium-burner-466106-g3
@@ -72,24 +72,35 @@ jobs:
         script: |
           set -e
 
+          echo "✅ SSH: Logged in to VM"
+
           # Clone or update repository
           if [ ! -d ~/mercari ]; then
+            echo "📥 Cloning repo..."
             git clone https://github.com/${{ github.repository }} ~/mercari
           else
+            echo "🔄 Updating repo..."
             cd ~/mercari && git pull origin main
           fi
 
           cd ~/mercari
 
+          # Check if docker-compose.yml exists
+          if [ ! -f docker-compose.yml ]; then
+            echo "❌ ERROR: docker-compose.yml not found!"
+            exit 1
+          fi
+
           # Install docker-compose if not available
           if ! command -v docker-compose &> /dev/null; then
-            echo "Installing docker-compose..."
+            echo "📦 Installing docker-compose..."
             sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
           fi
 
           # Create .env file if it doesn't exist
           if [ ! -f .env ]; then
+            echo "⚙️ Creating .env file..."
             cat > .env << EOF
           DB_USER=postgres
           DB_PASS=didit051211
@@ -100,9 +111,14 @@ jobs:
           DB_PORT=5432
           DB_DIALECT=postgres
           JWT_SECRET=mysecretkey
+          
           EOF
           fi
 
-          # Pull updated images and start containers
+          echo "📦 Pulling latest Docker images..."
           docker-compose pull || exit 1
+
+          echo "🚀 Starting containers..."
           docker-compose up -d --remove-orphans || exit 1
+
+          echo "✅ Deployment complete."
