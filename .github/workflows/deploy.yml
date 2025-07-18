@@ -83,7 +83,7 @@ jobs:
             cd ~/mercari && git pull origin main
           fi
 
-          cd ~/mercari
+          cd ~/mercari/deploy
 
           # Check if docker-compose.yml exists
           if [ ! -f docker-compose.yml ]; then
