@@ -3,7 +3,7 @@ name: CI/CD Deploy to GCP
 on:
   push:
     branches:
-      - main  # Ganti 'main' sesuai dengan nama default branch repo kamu
+      - master  # Ganti 'main' sesuai dengan nama default branch repo kamu
 
 env:
   GCP_PROJECT_ID: sodium-burner-466106-g3
