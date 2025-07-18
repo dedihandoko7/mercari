@@ -9,8 +9,9 @@ env:
   GCP_PROJECT_ID: sodium-burner-466106-g3
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -25,34 +26,34 @@ jobs:
 
     - name: Configure Docker to use GCR
       run: |
-        gcloud auth configure-docker asia-southeast2-docker.pkg.dev
+        gcloud auth configure-docker
 
     # Build & Push Auth Service
     - name: Build & Push auth-service image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mercari-repo/auth-service:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/auth-service:latest \
           ./auth-service --push
 
     # Build & Push Cart Service
     - name: Build & Push cart image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mercari-repo/cart:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/cart:latest \
           ./cart --push
 
     # Build & Push Product Service
     - name: Build & Push product image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mercari-repo/product:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/product:latest \
           ./product --push
 
     # Build & Push Gateway Service
     - name: Build & Push gateway-service image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mercari-repo/gateway-service:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/gateway-service:latest \
           ./gateway-service --push
 
     # SSH to VM and Deploy
@@ -79,16 +80,21 @@ jobs:
             sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
           fi
-
+          
+          # Configure Docker to use GCR (if gcloud is available on VM)
+          if command -v gcloud &> /dev/null; then
+            gcloud auth configure-docker
+          fi
+          
           # Create .env file with database credentials if it doesn't exist
           if [ ! -f .env ]; then
             cat > .env << EOF
           DB_USER=postgres
-          DB_PASS=didit051211
+          DB_PASS=GzUXBMEe8dFRBY69GYXNg2VWEYaGiTxcBkVB
           AUTH_DB_NAME=authdb
           CART_DB_NAME=cartdb
           PRODUCT_DB_NAME=productdb
-          DB_HOST=34.101.70.101
+          DB_HOST=34.123.120.244
           DB_PORT=5432
           DB_DIALECT=postgres
           JWT_SECRET=mysecretkey
