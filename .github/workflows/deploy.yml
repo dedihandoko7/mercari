@@ -83,7 +83,7 @@ jobs:
           
           # Configure Docker to use GCR (if gcloud is available on VM)
           if command -v gcloud &> /dev/null; then
-            gcloud auth configure-docker
+            gcloud auth configure-docker gcr.io
           fi
           
           # Create .env file with database credentials if it doesn't exist
