@@ -1,39 +1,35 @@
 version: '3.9'
-
 services:
-auth-service:
-image: asia-southeast2-docker.pkg.dev/sodium-burner-466106-g3/mercari-repo/auth-service:latest
-container_name: auth-service
-ports:
-  - "4000:4000"
-environment:
- - DB_USER=${DB_USER}
- - DB_PASS=${DB_PASS}
- - DB_NAME=${AUTH_DB_NAME}
- - DB_HOST=${DB_HOST}
- - DB_PORT=${DB_PORT}
- - DB_DIALECT=postgres
- - JWT_SECRET=${JWT_SECRET}
-restart: unless-stopped
+  auth-service:
+    image: mercari-repo/sodium-burner-466106-g3/auth-service:latest
+    ports:
+      - "4000:4000"
+    environment:
+    - DB_USER=${DB_USER}
+    - DB_PASS=${DB_PASS}
+    - DB_NAME=${AUTH_DB_NAME}
+    - DB_HOST=${DB_HOST}
+    - DB_PORT=${DB_PORT}
+    - DB_DIALECT=postgres
+    - JWT_SECRET=${JWT_SECRET}
+    restart: unless-stopped
 
-cart-service:
-  image: asia-southeast2-docker.pkg.dev/sodium-burner-466106-g3/mercari-repo/cart:latest
-  container_name: cart-service
-  ports:
-    - "3001:3001"
-  environment:
-  - DB_USER=${DB_USER}
-  - DB_PASS=${DB_PASS}
-  - DB_NAME=${CART_DB_NAME}
-  - DB_HOST=${DB_HOST}
-  - DB_PORT=${DB_PORT}
-  - DB_DIALECT=postgres
-  - JWT_SECRET=${JWT_SECRET}
-  restart: unless-stopped
+  cart-service:
+    image: mercari-repo/sodium-burner-466106-g3/cart:latest
+    ports:
+      - "3001:3001"
+    environment:
+    - DB_USER=${DB_USER}
+    - DB_PASS=${DB_PASS}
+    - DB_NAME=${CART_DB_NAME}
+    - DB_HOST=${DB_HOST}
+    - DB_PORT=${DB_PORT}
+    - DB_DIALECT=postgres
+    - JWT_SECRET=${JWT_SECRET}
+    restart: unless-stopped
 
   product-service:
-    image: asia-southeast2-docker.pkg.dev/sodium-burner-466106-g3/mercari-repo/product:latest
-    container_name: product-service
+    image: mercari-repo/sodium-burner-466106-g3/product:latest
     ports:
       - "3000:3000"
     environment:
@@ -47,14 +43,9 @@ cart-service:
     restart: unless-stopped
 
   gateway-service:
-    image: asia-southeast2-docker.pkg.dev/sodium-burner-466106-g3/mercari-repo/gateway-service:latest
-    container_name: gateway-service
+    image: mercari-repo/sodium-burner-466106-g3/gateway-service:latest
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-    depends_on:
-      - auth-service
-      - cart-service
-      - product-service
     restart: unless-stopped
