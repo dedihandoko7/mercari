@@ -3,7 +3,7 @@ name: CI/CD Deploy to GCP
 on:
   push:
     branches:
-      - master  # Ganti 'main' sesuai dengan nama default branch repo kamu
+      - master
 
 env:
   GCP_PROJECT_ID: sodium-burner-466106-g3
@@ -11,7 +11,6 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -24,12 +23,7 @@ jobs:
       with:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-    - name: Set up Google Cloud CLI
-      uses: google-github-actions/setup-gcloud@v1
-      with:
-        project_id: ${{ env.GCP_PROJECT_ID }}
-
-    - name: Configure Docker to use Artifact Registry
+    - name: Configure Docker to use GCR
       run: |
         gcloud auth configure-docker asia-southeast2-docker.pkg.dev
 
@@ -37,28 +31,28 @@ jobs:
     - name: Build & Push auth-service image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/auth-service:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mercari-repo/auth-service:latest \
           ./auth-service --push
 
     # Build & Push Cart Service
     - name: Build & Push cart image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/cart:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mercari-repo/cart:latest \
           ./cart --push
 
     # Build & Push Product Service
     - name: Build & Push product image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/product:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mercari-repo/product:latest \
           ./product --push
 
     # Build & Push Gateway Service
     - name: Build & Push gateway-service image
       run: |
         docker buildx build --platform linux/amd64 \
-          -t asia-southeast2-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/mercari-repo/gateway-service:latest \
+          -t asia-southeast2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/mercari-repo/gateway-service:latest \
           ./gateway-service --push
 
     # SSH to VM and Deploy
@@ -68,39 +62,26 @@ jobs:
         host: ${{ secrets.VM_HOST }}
         username: ${{ secrets.VM_USER }}
         key: ${{ secrets.VM_SSH_KEY }}
-        port: 22
         script: |
-          set -e
-
-          echo "✅ SSH: Logged in to VM"
-
           # Clone or update repository
           if [ ! -d ~/mercari ]; then
-            echo "📥 Cloning repo..."
             git clone https://github.com/${{ github.repository }} ~/mercari
           else
-            echo "🔄 Updating repo..."
-            cd ~/mercari && git pull origin main
+            cd ~/mercari && git pull
           fi
-
-          cd ~/deploy
-
-          # Check if docker-compose.yml exists
-          if [ ! -f docker-compose.yml ]; then
-            echo "❌ ERROR: docker-compose.yml not found!"
-            exit 1
-          fi
-
-          # Install docker-compose if not available
+          
+          # Navigate to repository
+          cd ~/mercari
+          
+          # Check if docker-compose is installed, if not install it
           if ! command -v docker-compose &> /dev/null; then
-            echo "📦 Installing docker-compose..."
+            echo "Installing docker-compose..."
             sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
           fi
 
-          # Create .env file if it doesn't exist
+          # Create .env file with database credentials if it doesn't exist
           if [ ! -f .env ]; then
-            echo "⚙️ Creating .env file..."
             cat > .env << EOF
           DB_USER=postgres
           DB_PASS=didit051211
@@ -111,14 +92,9 @@ jobs:
           DB_PORT=5432
           DB_DIALECT=postgres
           JWT_SECRET=mysecretkey
-          
           EOF
           fi
-
-          echo "📦 Pulling latest Docker images..."
-          docker-compose pull || exit 1
-
-          echo "🚀 Starting containers..."
-          docker-compose up -d --remove-orphans || exit 1
-
-          echo "✅ Deployment complete."
+          
+          # Pull and run containers
+          docker-compose pull
+          docker-compose up -d --remove-orphans
