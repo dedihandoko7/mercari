@@ -26,8 +26,8 @@ jobs:
 
     - name: Configure Docker to use GCR
       run: |
-        gcloud auth configure-docker gcr.io
-
+        gcloud auth configure-docker
+        
     # Build & Push Auth Service
     - name: Build & Push auth-service image
       run: |
@@ -90,7 +90,7 @@ jobs:
           if [ ! -f .env ]; then
             cat > .env << EOF
           DB_USER=postgres
-          DB_PASS=GzUXBMEe8dFRBY69GYXNg2VWEYaGiTxcBkVB
+          DB_PASS=didit051211
           AUTH_DB_NAME=authdb
           CART_DB_NAME=cartdb
           PRODUCT_DB_NAME=productdb
